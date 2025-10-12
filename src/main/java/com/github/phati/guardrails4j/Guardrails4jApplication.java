@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Guardrails4jApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Guardrails4jApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Guardrails4jApplication.class, args);
+    }
 
 }

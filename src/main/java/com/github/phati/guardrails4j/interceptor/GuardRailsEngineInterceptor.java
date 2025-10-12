@@ -6,9 +6,11 @@ import com.github.phati.guardrails4j.model.GuardRailsEngineResponse;
 import com.github.phati.guardrails4j.model.UserQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+@Log4j2
 public class GuardRailsEngineInterceptor implements HandlerInterceptor {
 
     private final GuardRailsEngine guardRailsEngine;
@@ -20,9 +22,12 @@ public class GuardRailsEngineInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.debug("GuardRailsEngineInterceptor: preHandle called for URI: {}", request.getRequestURI());
         UserQuery query = extractUserQuery(request);
+        log.debug("Extracted UserQuery: {}", query);
         GuardRailsEngineResponse guardRailsEngineResponse = guardRailsEngine.evaluateAll(query);
         if (!guardRailsEngineResponse.isAllow()) {
+            log.debug("Request blocked by GuardRailsEngine: {}", guardRailsEngineResponse.getFaildGuardResponse());
             throw new GuardException(guardRailsEngineResponse.getFaildGuardResponse().getMessage());
         }
         return true;

@@ -15,4 +15,6 @@ public class GuardResponse {
 
     private String message;
 
+    private String guardName;
+
 }
