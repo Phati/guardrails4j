@@ -1,4 +1,4 @@
-# guardrail4J
+# guardrails4J
 
 GuardRails4J is a Java library for building **adaptive query guardrails** for your application.  
 It allows developers to block sensitive or competitor-related queries using a **layered guard system**: simple text-based, vector-based semantic matching, and LLM-powered guards.
@@ -73,5 +73,6 @@ public class WebConfig implements WebMvcConfigurer {
     }
 }
 ```
+
 
 
