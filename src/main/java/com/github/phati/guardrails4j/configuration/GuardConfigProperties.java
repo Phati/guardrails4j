@@ -43,9 +43,11 @@ public class GuardConfigProperties {
         public static class VectorBased {
             private boolean enabled;
             private int order;
+            private int topK = 3;
+            private String vectorStoreBeanName;
+            private double similarityThreshold = 0.95;
         }
 
     }
-
 
 }
