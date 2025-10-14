@@ -26,7 +26,7 @@ public class VectorBasedCompetitorGuard implements CompetitorGuard {
 
     @Override
     public GuardResponse evaluate(UserQuery userQuery) {
-        log.debug("VectorBasedCompetitorGuard: Evaluating user query: {} with llm call", userQuery.getQuery());
+        log.debug("VectorBasedCompetitorGuard: Evaluating user query: {}", userQuery.getQuery());
         List<Document> documents = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(userQuery.getQuery())
@@ -34,6 +34,11 @@ public class VectorBasedCompetitorGuard implements CompetitorGuard {
                         .similarityThreshold(competitorGuard.getVectorBased().getSimilarityThreshold())
                         .build()
         );
+
+        log.debug("VectorBasedCompetitorGuard: Found {} similar documents", documents.size());
+        documents.forEach(document ->{
+            log.debug("Document: {} | Score: {}", document.getText(), document.getMetadata().get("score"));
+        });
 
         if (!documents.isEmpty()) {
             return GuardResponse.builder()
