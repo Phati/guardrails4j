@@ -28,7 +28,9 @@ public class GuardRailsEngineInterceptor implements HandlerInterceptor {
         GuardRailsEngineResponse guardRailsEngineResponse = guardRailsEngine.evaluateAll(query);
         if (!guardRailsEngineResponse.isAllow()) {
             log.debug("Request blocked by GuardRailsEngine: {}", guardRailsEngineResponse.getFaildGuardResponse());
-            throw new GuardException(guardRailsEngineResponse.getFaildGuardResponse().getMessage());
+            throw new GuardException(guardRailsEngineResponse.getFaildGuardResponse().getGuardName(),
+                    guardRailsEngineResponse.getFaildGuardResponse().getMessage(),
+                    "Request blocked by GuardRailsEngine");
         }
         return true;
     }
