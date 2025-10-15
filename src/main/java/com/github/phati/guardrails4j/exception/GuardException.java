@@ -1,12 +1,12 @@
 package com.github.phati.guardrails4j.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class GuardException extends RuntimeException {
 
     private String guardName;
