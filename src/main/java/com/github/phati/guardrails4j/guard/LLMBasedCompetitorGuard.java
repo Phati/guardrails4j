@@ -7,6 +7,10 @@ import com.github.phati.guardrails4j.model.GuardResponse;
 import com.github.phati.guardrails4j.model.UserQuery;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
+
+import java.util.List;
 
 @Log4j2
 public class LLMBasedCompetitorGuard implements CompetitorGuard {
@@ -30,11 +34,13 @@ public class LLMBasedCompetitorGuard implements CompetitorGuard {
     private final Integer order;
     private final ChatClient chatClient;
     private final GuardConfigProperties.CompetitorGuard competitorGuard;
+    private final VectorStore vectorStore;
 
-    public LLMBasedCompetitorGuard(ChatClient chatClient, GuardConfigProperties.CompetitorGuard competitorGuard) {
+    public LLMBasedCompetitorGuard(ChatClient chatClient, GuardConfigProperties.CompetitorGuard competitorGuard, VectorStore vectorStore) {
         this.order = competitorGuard.getLlmBased().getOrder();
         this.chatClient = chatClient;
         this.competitorGuard = competitorGuard;
+        this.vectorStore = vectorStore;
     }
 
     @Override
@@ -49,6 +55,9 @@ public class LLMBasedCompetitorGuard implements CompetitorGuard {
         log.debug("LLMBasedCompetitorGuard: LLM response: {}", competitorGuardLLMResponse);
 
         if (competitorGuardLLMResponse == null || competitorGuardLLMResponse.getAction() == null || competitorGuardLLMResponse.getAction().equalsIgnoreCase("BLOCKED")) {
+            //update knowledge base with blocked query
+            vectorStore.add(List.of(new Document[]{new Document(userQuery.getQuery())}));
+
             return GuardResponse.builder()
                     .decision(GuardDecision.BLOCK)
                     .message(competitorGuard.getDefaultResponse())

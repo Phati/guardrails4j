@@ -41,10 +41,22 @@ public class GuardRailsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "guard.competitors.llm-based.enabled", havingValue = "true")
-    public LLMBasedCompetitorGuard llmBasedCompetitorGuard(ApplicationContext applicationContext) {
+    @ConditionalOnProperty(value = "guard.competitors.llm-based.update-knowledge-on-blocked-query", havingValue = "false", matchIfMissing = true)
+    public LLMBasedCompetitorGuard llmBasedCompetitorGuard1(ApplicationContext applicationContext) {
         log.info("Initializing LLM Based Competitor Guard with ChatClient Bean Name: {}", guardConfigProperties.getCompetitors().getLlmBased().getChatClientBeanName());
         ChatClient chatClient = applicationContext.getBean(guardConfigProperties.getCompetitors().getLlmBased().getChatClientBeanName(), ChatClient.class);
-        return new LLMBasedCompetitorGuard(chatClient, guardConfigProperties.getCompetitors());
+        return new LLMBasedCompetitorGuard(chatClient, guardConfigProperties.getCompetitors(), null);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "guard.competitors.llm-based.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "guard.competitors.llm-based.update-knowledge-on-blocked-query", havingValue = "true")
+    public LLMBasedCompetitorGuard llmBasedCompetitorGuard2(ApplicationContext applicationContext) {
+        log.info("Initializing LLM Based Competitor Guard with ChatClient Bean Name: {} and vectorStore Bean name: {} ", guardConfigProperties.getCompetitors().getLlmBased().getChatClientBeanName(), guardConfigProperties.getCompetitors().getLlmBased().getVectorStoreBeanName());
+        VectorStore vectorStore = applicationContext.getBean(guardConfigProperties.getCompetitors().getLlmBased().getVectorStoreBeanName(), VectorStore.class);
+        ChatClient chatClient = applicationContext.getBean(guardConfigProperties.getCompetitors().getLlmBased().getChatClientBeanName(), ChatClient.class);
+        return new LLMBasedCompetitorGuard(chatClient, guardConfigProperties.getCompetitors(), vectorStore);
     }
 
     @Bean

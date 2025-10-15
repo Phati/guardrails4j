@@ -37,6 +37,8 @@ public class GuardConfigProperties {
             private boolean enabled;
             private int order;
             private String chatClientBeanName;
+            private String vectorStoreBeanName;
+            private boolean updateKnowledgeOnBlockedQuery;
         }
 
         @Data
